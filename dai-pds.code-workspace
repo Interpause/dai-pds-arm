@@ -1,0 +1,21 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "src/arm_arduino_bridge/platformio"
+		}
+	],
+	"settings": {
+		"terminal.integrated.profiles.linux": {
+			"ros2": {
+				"path": "bash",
+				"args": [
+					"${workspaceFolder}/scripts/activate.sh"
+				]
+			}
+		},
+		"terminal.integrated.defaultProfile.linux": "ros2"
+	}
+}
