@@ -1,0 +1,255 @@
+<?xml version='1.0' encoding='utf-8'?>
+<robot name="for">
+    <link name="middle_arm">
+        <inertial>
+            <origin xyz="-0.006821813314628998 -0.1532041560338326 0.05000000000000082" rpy="0.0 -0.0 0.0" />
+            <mass value="14.913336866289496" />
+            <inertia ixx="0.3456641663469676" iyy="0.033127800192854884" izz="0.3412699882035891" ixy="-0.008837326981739557" iyz="-2.240376359976674e-16" ixz="-1.0096436329707436e-15" />
+        </inertial>
+        <visual name="middle_arm_visual">
+            <origin xyz="0.23000000000000087 -0.2150000000000016 0.05000000000000074" rpy="1.0317267873372e-15 -1.5707963267948937 0" />
+            <geometry>
+                <mesh filename="package://arm_description/meshes/middle_arm.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </visual>
+        <collision name="middle_arm_collision">
+            <origin xyz="0.23000000000000087 -0.2150000000000016 0.05000000000000074" rpy="1.0317267873372e-15 -1.5707963267948937 0" />
+            <geometry>
+                <mesh filename="package://arm_description/meshes/middle_arm.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+    </link>
+    <link name="middle_joint">
+        <inertial>
+            <origin xyz="-6.750155989720952e-16 -0.0065165722705416585 -0.04000000000000133" rpy="0.0 -0.0 0.0" />
+            <mass value="2.4815724758018978" />
+            <inertia ixx="0.0023990415702580536" iyy="0.0022574261860321965" izz="0.002172420223713223" ixy="4.163336342344337e-17" iyz="8.016912307078491e-18" ixz="-1.587132717554275e-17" />
+        </inertial>
+        <visual name="middle_joint_visual">
+            <origin xyz="0.2299999999999995 -0.18499999999999783 -0.04000000000000054" rpy="-3.1415926535897922 1.5707963267948928 0" />
+            <geometry>
+                <mesh filename="package://arm_description/meshes/middle_joint.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </visual>
+        <collision name="middle_joint_collision">
+            <origin xyz="0.2299999999999995 -0.18499999999999783 -0.04000000000000054" rpy="-3.1415926535897922 1.5707963267948928 0" />
+            <geometry>
+                <mesh filename="package://arm_description/meshes/middle_joint.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+    </link>
+    <link name="end_arm">
+        <inertial>
+            <origin xyz="0.00017296597296638795 -0.0955928007405587 -0.03500000000000232" rpy="0.0 -0.0 0.0" />
+            <mass value="8.692067657781596" />
+            <inertia ixx="0.04478719129792861" iyy="0.007156272496323668" izz="0.04484494187373855" ixy="1.2648704068807248e-05" iyz="2.643232454991465e-16" ixz="-4.07832905001567e-15" />
+        </inertial>
+        <visual name="end_arm_visual">
+            <origin xyz="0.23000000000000767 -0.08000000000000071 -0.03500000000000412" rpy="-3.1415926535897922 1.5707963267948926 0" />
+            <geometry>
+                <mesh filename="package://arm_description/meshes/end_arm.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </visual>
+        <collision name="end_arm_collision">
+            <origin xyz="0.23000000000000767 -0.08000000000000071 -0.03500000000000412" rpy="-3.1415926535897922 1.5707963267948926 0" />
+            <geometry>
+                <mesh filename="package://arm_description/meshes/end_arm.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+    </link>
+    <link name="base_link">
+        <inertial>
+            <origin xyz="0.0 -0.30000000000000004 0.049192069318732934" rpy="0.0 0.0 0.0" />
+            <mass value="3.492381453934488" />
+            <inertia ixx="0.004385396235027539" iyy="0.00898624245054548" izz="0.008077354797414282" ixy="8.567440090700984e-18" iyz="-1.3877787807814457e-17" ixz="-1.4279066817834973e-18" />
+        </inertial>
+        <visual name="base_link_visual">
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+            <geometry>
+                <mesh filename="package://arm_description/meshes/base_link.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </visual>
+        <collision name="base_link_collision">
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" />
+            <geometry>
+                <mesh filename="package://arm_description/meshes/base_link.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+    </link>
+    <link name="bottom_arm">
+        <inertial>
+            <origin xyz="-8.881784197001253e-17 -0.25750000000009193 0.04999999999999999" rpy="0.0 -0.0 0.0" />
+            <mass value="43.51018779133492" />
+            <inertia ixx="1.2049427875736067" iyy="0.07331976297533455" izz="1.205745570896721" ixy="-1.8041124150158794e-16" iyz="1.1484879674491842e-16" ixz="1.599081144887326e-16" />
+        </inertial>
+        <visual name="bottom_arm_visual">
+            <origin xyz="-0.059999999999999984 -0.21499999999999975 0.04999999999999998" rpy="-0.0 1.5707963267948966 0" />
+            <geometry>
+                <mesh filename="package://arm_description/meshes/bottom_arm.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </visual>
+        <collision name="bottom_arm_collision">
+            <origin xyz="-0.059999999999999984 -0.21499999999999975 0.04999999999999998" rpy="-0.0 1.5707963267948966 0" />
+            <geometry>
+                <mesh filename="package://arm_description/meshes/bottom_arm.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+    </link>
+    <link name="double_hinge_1">
+        <inertial>
+            <origin xyz="0.037688201448005214 -4.263256414560601e-16 -0.04999999999999995" rpy="1.3684555315672042e-48 -1.3684555315672045e-48 0.0" />
+            <mass value="4.364478285234242" />
+            <inertia ixx="0.010933091857069529" iyy="0.013601374091802999" izz="0.00880246045395322" ixy="5.5511151231257815e-17" iyz="2.788017890091272e-17" ixz="3.145486945329299e-17" />
+        </inertial>
+        <visual name="double_hinge_1_visual">
+            <origin xyz="-0.20000000000000018 -0.05000000000000057 -0.04999999999999997" rpy="-1.5707963267948961 -1.5707963267948963 0" />
+            <geometry>
+                <mesh filename="package://arm_description/meshes/double_hinge_1.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </visual>
+        <collision name="double_hinge_1_collision">
+            <origin xyz="-0.20000000000000018 -0.05000000000000057 -0.04999999999999997" rpy="-1.5707963267948961 -1.5707963267948963 0" />
+            <geometry>
+                <mesh filename="package://arm_description/meshes/double_hinge_1.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+    </link>
+    <link name="double_hinge_2">
+        <inertial>
+            <origin xyz="-1.2876682965766517e-17 -0.05419056169125146 -4.263256414560601e-16" rpy="0.0 -0.0 0.0" />
+            <mass value="4.67274706436774" />
+            <inertia ixx="0.00950541138801303" iyy="0.01102942585054853" izz="0.014304325025858267" ixy="2.609845593342295e-16" iyz="3.608224830031759e-16" ixz="1.5823643597379597e-15" />
+        </inertial>
+        <visual name="double_hinge_2_visual">
+            <origin xyz="1.0991207926034845e-16 0.27499999999999974 0.0499999999999995" rpy="3.1415926535897927 -2.2168155435431945e-16 5.415688790932895e-16" />
+            <geometry>
+                <mesh filename="package://arm_description/meshes/double_hinge_2.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </visual>
+        <collision name="double_hinge_2_collision">
+            <origin xyz="1.0991207926034845e-16 0.27499999999999974 0.0499999999999995" rpy="3.1415926535897927 -2.2168155435431945e-16 5.415688790932895e-16" />
+            <geometry>
+                <mesh filename="package://arm_description/meshes/double_hinge_2.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+    </link>
+    <link name="end_hinge">
+        <inertial>
+            <origin xyz="0.04334767385960195 3.125622995980848e-09 -0.03500000000000026" rpy="-4.66414641492302e-93 -0.0 0.0" />
+            <mass value="1.8425529334040007" />
+            <inertia ixx="0.0017065787191412572" iyy="0.0028506776781958287" izz="0.0022766801931930203" ixy="-6.93889390390723e-18" iyz="-1.349129719192973e-18" ixz="-1.3067917138786373e-18" />
+        </inertial>
+        <visual name="end_hinge_visual">
+            <origin xyz="-0.08000000190467255 0.23000000312562272 -0.03500000000000119" rpy="1.5707963267948994 -1.5707963267948928 0" />
+            <geometry>
+                <mesh filename="package://arm_description/meshes/end_hinge.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </visual>
+        <collision name="end_hinge_collision">
+            <origin xyz="-0.08000000190467255 0.23000000312562272 -0.03500000000000119" rpy="1.5707963267948994 -1.5707963267948928 0" />
+            <geometry>
+                <mesh filename="package://arm_description/meshes/end_hinge.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+    </link>
+    <link name="effector">
+        <inertial>
+            <origin xyz="-1.8358539606686745e-16 -9.678477748060743e-05 -3.125622463073796e-09" rpy="0.0 -0.0 0.0" />
+            <mass value="1.2740132104029298" />
+            <inertia ixx="0.001096661275770655" iyy="0.0019325263719418735" izz="0.0010966612757706828" ixy="-1.228166048708614e-18" iyz="9.923322481625804e-49" ixz="-3.575970261924019e-18" />
+        </inertial>
+        <visual name="effector_visual">
+            <origin xyz="-2.197930563591016e-13 -0.14731526000000084 0.11118834374874897" rpy="-1.5707963267948912 -1.9796710251879093e-12 3.8712692714181136e-15" />
+            <geometry>
+                <mesh filename="package://arm_description/meshes/effector.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </visual>
+        <collision name="effector_collision">
+            <origin xyz="-2.197930563591016e-13 -0.14731526000000084 0.11118834374874897" rpy="-1.5707963267948912 -1.9796710251879093e-12 3.8712692714181136e-15" />
+            <geometry>
+                <mesh filename="package://arm_description/meshes/effector.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+    </link>
+    <link name="middle_hinge">
+        <inertial>
+            <origin xyz="-1.084588906092738e-15 7.460698725481052e-16 0.03337616066718633" rpy="0.0 -0.0 0.0" />
+            <mass value="1.238346126302344" />
+            <inertia ixx="0.0013074725172245866" iyy="0.0018814700022272892" izz="0.0013365020497914937" ixy="2.327640243039969e-19" iyz="1.0408340855860843e-17" ixz="-1.5078296759492959e-18" />
+        </inertial>
+        <visual name="middle_hinge_visual">
+            <origin xyz="-5.195843755245733e-16 -0.22999999999999915 0.1424999999999975" rpy="1.5707963267948974 -3.9340553169929316e-15 -3.1415926535897927" />
+            <geometry>
+                <mesh filename="package://arm_description/meshes/middle_hinge.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </visual>
+        <collision name="middle_hinge_collision">
+            <origin xyz="-5.195843755245733e-16 -0.22999999999999915 0.1424999999999975" rpy="1.5707963267948974 -3.9340553169929316e-15 -3.1415926535897927" />
+            <geometry>
+                <mesh filename="package://arm_description/meshes/middle_hinge.stl" scale="0.001 0.001 0.001" />
+            </geometry>
+        </collision>
+    </link>
+    <joint name="base_revolute" type="revolute">
+        <origin xyz="-0.05 -0.3 0.06" rpy="-3.141592653589793 -1.5707963267948966 0" />
+        <parent link="base_link" />
+        <child link="bottom_arm" />
+        <axis xyz="0.0 0.0 1.0" />
+        <limit lower="0.0" upper="3.141593" effort="100" velocity="5.25" />
+    </joint>
+    <joint name="double_revolute_1" type="revolute">
+        <origin xyz="0.0 -0.515 0.0" rpy="-3.141592653589793 1.2325951644078312e-32 0.0" />
+        <parent link="bottom_arm" />
+        <child link="double_hinge_1" />
+        <axis xyz="-1.232595164407831e-32 -7.264100934339954e-33 -1.0" />
+        <limit lower="-3.141593" upper="0.0" effort="100" velocity="5.25" />
+    </joint>
+    <joint name="double_spin" type="revolute">
+        <origin xyz="0.075 0.0 -0.05" rpy="-1.5707963267948966 1.5707963267948966 0" />
+        <parent link="double_hinge_1" />
+        <child link="double_hinge_2" />
+        <axis xyz="-2.394370405175024e-34 -1.0 9.860761315262648e-32" />
+        <limit lower="-1.570796" upper="1.570796" effort="100" velocity="5.25" />
+    </joint>
+    <joint name="double_revolute_2" type="revolute">
+        <origin xyz="0.05 -0.095 0.0" rpy="1.5707963267948966 -4.930380657631324e-32 -1.5707963267948966" />
+        <parent link="double_hinge_2" />
+        <child link="middle_arm" />
+        <axis xyz="-3.3770725482791246e-31 0.0 1.0" />
+        <limit lower="0" upper="3.141593" effort="100" velocity="5.25" />
+    </joint>
+    <joint name="middle_revolute" type="revolute">
+        <origin xyz="0.0 -0.4 0.01" rpy="-3.141592653589793 -5.3492248113316545e-31 -1.9721522630525295e-31" />
+        <parent link="middle_arm" />
+        <child link="middle_joint" />
+        <axis xyz="1.9721522630525295e-31 -8.8423821631989e-31 -1.0" />
+        <limit lower="-3.141593" upper="0.0" effort="100" velocity="5.25" />
+    </joint>
+    <joint name="end_revolute_1" type="revolute">
+        <origin xyz="0.035 0.0 0.0625" rpy="-1.5707963267948966 1.9721522630525295e-31 -1.5707963267948966" />
+        <parent link="middle_hinge" />
+        <child link="end_arm" />
+        <axis xyz="0.0 3.5809630637045637e-31 -1.0" />
+        <limit lower="-1.570796" upper="1.570796" effort="100" velocity="5.25" />
+    </joint>
+    <joint name="end_revolute_2" type="revolute">
+        <origin xyz="0.0001847400000000121 -0.19118835 0.0" rpy="2.9813635182538454e-31 3.5311022049962373e-62 -9.860761315262648e-32" />
+        <parent link="end_arm" />
+        <child link="end_hinge" />
+        <axis xyz="0.0 5.995995454507183e-32 -1.0" />
+        <limit lower="0" upper="3.141593" effort="100" velocity="5.25" />
+    </joint>
+    <joint name="middle_spin" type="revolute">
+        <origin xyz="0.0 -0.0425 -0.04" rpy="1.5707963267948966 -1.5707963267948966 0" />
+        <parent link="middle_joint" />
+        <child link="middle_hinge" />
+        <axis xyz="2.4316648279921467e-31 -1.9721522630525295e-31 1.0" />
+        <limit lower="-1.570796" upper="1.570796" effort="100" velocity="5.25" />
+    </joint>
+    <joint name="effector_spin" type="continuous">
+        <origin xyz="0.0825 0.0 -0.035" rpy="1.5707963267948966 -1.5707963267948966 0" />
+        <parent link="end_hinge" />
+        <child link="effector" />
+        <axis xyz="0.0 1.0 0.0" />
+    </joint>
+</robot>

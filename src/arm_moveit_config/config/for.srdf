@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--This does not replace URDF, and is not an extension of URDF.
+    This is a format for representing semantic information about the robot structure.
+    A URDF file must exist for this robot as well, where the joints and the links that are referenced are defined
+-->
+<robot name="for">
+    <!--GROUPS: Representation of a set of joints and links. This can be useful for specifying DOF to plan for, defining arms, end effectors, etc-->
+    <!--LINKS: When a link is specified, the parent joint of that link (if it exists) is automatically included-->
+    <!--JOINTS: When a joint is specified, the child link of that joint (which will always exist) is automatically included-->
+    <!--CHAINS: When a chain is specified, all the links along the chain (including endpoints) are included in the group. Additionally, all the joints that are parents to included links are also included. This means that joints along the chain and the parent joint of the base link are included in the group-->
+    <!--SUBGROUPS: Groups can also be formed by referencing to already defined group names-->
+    <group name="arm">
+        <joint name="base_joint"/>
+        <joint name="base_revolute"/>
+        <joint name="double_revolute_1"/>
+        <joint name="double_spin"/>
+        <joint name="double_revolute_2"/>
+        <joint name="middle_revolute"/>
+        <joint name="middle_spin"/>
+        <joint name="end_revolute_1"/>
+        <joint name="end_revolute_2"/>
+    </group>
+    <group name="hand">
+        <link name="effector"/>
+    </group>
+    <!--GROUP STATES: Purpose: Define a named state for a particular group, in terms of joint values. This is useful to define states like 'folded arms'-->
+    <group_state name="folded" group="arm">
+        <joint name="base_revolute" value="0"/>
+        <joint name="double_revolute_1" value="0"/>
+        <joint name="double_revolute_2" value="0"/>
+        <joint name="double_spin" value="0"/>
+        <joint name="end_revolute_1" value="0"/>
+        <joint name="end_revolute_2" value="0"/>
+        <joint name="middle_revolute" value="0"/>
+        <joint name="middle_spin" value="0"/>
+    </group_state>
+    <group_state name="extended_full" group="arm">
+        <joint name="base_revolute" value="1.5708"/>
+        <joint name="double_revolute_1" value="-1.5707"/>
+        <joint name="double_revolute_2" value="1.5707"/>
+        <joint name="double_spin" value="0"/>
+        <joint name="end_revolute_1" value="0"/>
+        <joint name="end_revolute_2" value="1.5707"/>
+        <joint name="middle_revolute" value="-3.1415"/>
+        <joint name="middle_spin" value="0"/>
+    </group_state>
+    <group_state name="example1" group="arm">
+        <joint name="base_revolute" value="1.7633"/>
+        <joint name="double_revolute_1" value="-1.743"/>
+        <joint name="double_revolute_2" value="0.4459"/>
+        <joint name="double_spin" value="1.5707"/>
+        <joint name="end_revolute_1" value="0.6384"/>
+        <joint name="end_revolute_2" value="0.2432"/>
+        <joint name="middle_revolute" value="-2.7969"/>
+        <joint name="middle_spin" value="0.3547"/>
+    </group_state>
+    <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
+    <end_effector name="hand" parent_link="end_hinge" group="hand"/>
+    <!--VIRTUAL JOINT: Purpose: this element defines a virtual joint between a robot link and an external frame of reference (considered fixed with respect to the robot)-->
+    <virtual_joint name="base_joint" type="fixed" parent_frame="world" child_link="base_link"/>
+    <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
+    <disable_collisions link1="base_link" link2="bottom_arm" reason="Adjacent"/>
+    <disable_collisions link1="base_link" link2="double_hinge_1" reason="Never"/>
+    <disable_collisions link1="base_link" link2="double_hinge_2" reason="Never"/>
+    <disable_collisions link1="base_link" link2="middle_arm" reason="Never"/>
+    <disable_collisions link1="base_link" link2="middle_hinge" reason="Never"/>
+    <disable_collisions link1="base_link" link2="middle_joint" reason="Never"/>
+    <disable_collisions link1="bottom_arm" link2="double_hinge_1" reason="Adjacent"/>
+    <disable_collisions link1="bottom_arm" link2="double_hinge_2" reason="Never"/>
+    <disable_collisions link1="bottom_arm" link2="middle_arm" reason="Never"/>
+    <disable_collisions link1="bottom_arm" link2="middle_hinge" reason="Never"/>
+    <disable_collisions link1="bottom_arm" link2="middle_joint" reason="Never"/>
+    <disable_collisions link1="double_hinge_1" link2="double_hinge_2" reason="Adjacent"/>
+    <disable_collisions link1="double_hinge_1" link2="end_arm" reason="Never"/>
+    <disable_collisions link1="double_hinge_1" link2="middle_arm" reason="Never"/>
+    <disable_collisions link1="double_hinge_1" link2="middle_hinge" reason="Never"/>
+    <disable_collisions link1="double_hinge_1" link2="middle_joint" reason="Never"/>
+    <disable_collisions link1="double_hinge_2" link2="end_arm" reason="Never"/>
+    <disable_collisions link1="double_hinge_2" link2="middle_arm" reason="Adjacent"/>
+    <disable_collisions link1="double_hinge_2" link2="middle_hinge" reason="Never"/>
+    <disable_collisions link1="double_hinge_2" link2="middle_joint" reason="Never"/>
+    <disable_collisions link1="effector" link2="end_arm" reason="Never"/>
+    <disable_collisions link1="effector" link2="end_hinge" reason="Adjacent"/>
+    <disable_collisions link1="effector" link2="middle_hinge" reason="Never"/>
+    <disable_collisions link1="effector" link2="middle_joint" reason="Never"/>
+    <disable_collisions link1="end_arm" link2="end_hinge" reason="Adjacent"/>
+    <disable_collisions link1="end_arm" link2="middle_hinge" reason="Adjacent"/>
+    <disable_collisions link1="end_arm" link2="middle_joint" reason="Never"/>
+    <disable_collisions link1="end_hinge" link2="middle_arm" reason="Default"/>
+    <disable_collisions link1="end_hinge" link2="middle_hinge" reason="Never"/>
+    <disable_collisions link1="end_hinge" link2="middle_joint" reason="Never"/>
+    <disable_collisions link1="middle_arm" link2="middle_hinge" reason="Default"/>
+    <disable_collisions link1="middle_arm" link2="middle_joint" reason="Adjacent"/>
+    <disable_collisions link1="middle_hinge" link2="middle_joint" reason="Adjacent"/>
+</robot>

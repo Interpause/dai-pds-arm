@@ -1,0 +1,9 @@
+base_revolute: 0
+double_revolute_1: +pi/2
+double_spin: 0
+double_revolute_2: +pi/2
+middle_revolute: 0
+middle_spin: 0
+end_revolute_1: 0
+end_revolute_2: +pi/2
+

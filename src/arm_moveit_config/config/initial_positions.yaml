@@ -1,0 +1,12 @@
+# Default initial positions for for's ros2_control fake system
+
+initial_positions:
+  base_revolute: 0
+  double_revolute_1: 0
+  double_revolute_2: 0
+  double_spin: 0
+  effector_spin: 0
+  end_revolute_1: 0
+  end_revolute_2: 0
+  middle_revolute: 0
+  middle_spin: 0
