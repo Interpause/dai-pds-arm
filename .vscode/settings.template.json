@@ -1,0 +1,18 @@
+{
+  "ros.distro": "humble",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
+  "python.defaultInterpreterPath": "/usr/bin/python3",
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff"
+  },
+  // "terminal.integrated.profiles.linux": {
+  //     "ros2": {
+  //       "path": "bash",
+  //       "args": ["${workspaceFolder}/scripts/activate.sh"]
+  //     }
+  //   },
+  // "terminal.integrated.defaultProfile.linux": "ros2"
+}

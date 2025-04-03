@@ -1,0 +1,57 @@
+// Format details: https://aka.ms/devcontainer.json
+// Custom Dockerfile: https://containers.dev/guide/dockerfile
+{
+  "name": "DAI PDS",
+
+  "dockerComposeFile": [
+    "compose.yaml",
+    // Workaround from: https://github.com/microsoft/vscode-remote-release/issues/2067#issuecomment-1666424762
+    "compose.${localEnv:OS}.yaml"
+  ],
+  "service": "devcontainer",
+  "workspaceFolder": "/workspaces/dai-pds",
+
+  // https://containers.dev/features
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": false,
+      "installOhMyZsh": false,
+      "installOhMyZshConfig": false,
+      "upgradePackages": false
+    }
+  },
+
+  // Use 'forwardPorts' to automatically forward parts.
+  "forwardPorts": [],
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        // ROS support for VS Code.
+        "ms-iot.vscode-ros",
+        // CMake syntax highlighting.
+        "twxs.cmake",
+        // All-in-one Python type-checking, linter & formatter.
+        "charliermarsh.ruff",
+        // Snippet generator for Python docstrings.
+        "njpwerner.autodocstring",
+        // XML validation and formatting (SDF/URDF are XML).
+        "redhat.vscode-xml",
+        // Jupyter Notebook support.
+        "ms-toolsai.jupyter",
+        // PlatformIO IDE support.
+        "platformio.platformio-ide"
+      ]
+    }
+  },
+
+  "remoteEnv": {
+    "RCUTILS_COLORIZED_OUTPUT": "1"
+  },
+
+  // See: https://containers.dev/implementors/json_reference/#lifecycle-scripts
+  "initializeCommand": ".devcontainer/hooks/initialize.sh",
+  "postCreateCommand": ".devcontainer/hooks/postCreate.sh",
+  "postStartCommand": ".devcontainer/hooks/postStart.sh"
+  // "shutdownAction": "none",
+}

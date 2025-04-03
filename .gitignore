@@ -1,0 +1,15 @@
+.mypy_cache
+*__pycache__*
+build/
+install/
+log/
+
+.vscode/*
+!.vscode/settings.template.json
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+
+# Allow selectively enabling/disabling packages for build.
+src/*/COLCON_IGNORE
+rosbag2_*/

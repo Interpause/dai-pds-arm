@@ -1,0 +1,14 @@
+{
+  "recommendations": [
+    // ROS support for VS Code.
+    "ms-iot.vscode-ros",
+    // CMake syntax highlighting.
+    "twxs.cmake",
+    // All-in-one Python type-checking, linter & formatter.
+    "charliermarsh.ruff",
+    // Snippet generator for Python docstrings.
+    "njpwerner.autodocstring",
+    // XML validation and formatting (SDF/URDF are XML).
+    "redhat.vscode-xml"
+  ]
+}
