@@ -12,7 +12,7 @@
 			"ros2": {
 				"path": "bash",
 				"args": [
-					"${workspaceFolder}/scripts/activate.sh"
+					"/workspaces/dai-pds/scripts/activate.sh"
 				]
 			}
 		},
