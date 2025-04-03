@@ -7,7 +7,7 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 WS_DIR=$(realpath "$SCRIPT_DIR"/..)
 
 # Don't let nesting occur.
-if [[ -n "$__ROS_ENV" && "$1" != "--force" ]]; then
+if [[ "${__ROS_ENV:-}" == "1" ]]; then
   echo "Already in ROS environment. Use 'reload' instead to refresh the environment."
   exit 1
 fi
@@ -18,6 +18,9 @@ if [[ ! -f "$WS_DIR"/install/setup.bash ]]; then
   exec bash
 fi
 
+# Store original working directory.
+ORIGINAL_DIR=$(pwd)
+
 # Setup the overlay in a new subshell.
 exec bash --init-file <(echo "\
   source ~/.bashrc;\
@@ -25,12 +28,13 @@ exec bash --init-file <(echo "\
   source install/setup.bash;\
   alias deactivate='exit';\
   alias launch='ros2 launch';\
-  reload() { echo Reloading ROS! && exec \"$WS_DIR\"/scripts/activate.sh --force; };\
+  reload() { echo "Reloading ROS!"; __ROS_ENV=0 exec \"$WS_DIR\"/scripts/activate.sh; };\
   build() { \"$WS_DIR\"/scripts/build.sh \$@; reload; };\
   run() { if [[ -z "\${TMUX_CMD}" ]]; then echo Only used in tmux.sh; else \$TMUX_CMD; fi };\
   export PYTHONWARNINGS=ignore:::setuptools.command.install,ignore:::setuptools.command.easy_install,ignore:::pkg_resources;\
   export __ROS_ENV=1;\
   export RCUTILS_COLORIZED_OUTPUT=1;\
   PS1=\"[ROS] \${PS1:-}\";\
+  cd $ORIGINAL_DIR;\
 ")
 #source install/local_setup.bash;\
