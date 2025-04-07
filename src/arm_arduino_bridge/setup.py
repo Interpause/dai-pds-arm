@@ -18,6 +18,8 @@ setup(
     license="License declaration",
     tests_require=["pytest"],
     entry_points={
-        "console_scripts": [],
+        "console_scripts": [
+            "bridge = arm_arduino_bridge.bridge:main",
+        ],
     },
 )
