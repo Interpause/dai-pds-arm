@@ -4,10 +4,10 @@
 #include <ESPAsyncWebServer.h>
 #include "env.h"
 
-#define SERVO_FREQ 50
-#define SERVO_MIN_PULSE 500
-#define SERVO_MAX_PULSE 2500
-#define NUM_SERVOS 16
+// Calibrated using: https://github.com/adafruit/Adafruit-PWM-Servo-Driver-Library/blob/master/examples/oscillator/oscillator.ino
+#define PWM_CAL_OSCI 29245000
 
-/** Connect to wifi. */
-void connect();
+#define SERVO_FREQ 50
+#define SERVO_MIN_PULSE 100
+#define SERVO_MAX_PULSE 2900
+#define NUM_SERVOS 16

@@ -8,7 +8,10 @@ void writeServos()
 {
   for (auto i = 0; i < NUM_SERVOS; i++)
   {
-    int16_t us = constrain(servoPulses[i], SERVO_MIN_PULSE, SERVO_MAX_PULSE);
+    auto us = servoPulses[i];
+    if (us == 0)
+      continue;
+    us = constrain(servoPulses[i], SERVO_MIN_PULSE, SERVO_MAX_PULSE);
     Serial.printf("Servo %d: %d\n", i + 1, us);
     pwm.writeMicroseconds(i, us);
   }
@@ -46,7 +49,7 @@ void serverOnNotFound(AsyncWebServerRequest *req)
 
 void serverOnRead(AsyncWebServerRequest *req)
 {
-  Serial.printf("Read request.");
+  // Serial.println("Read request.");
   auto *res = req->beginResponseStream("application/json");
 
   res->printf("[%d", servoPulses[0]);
@@ -58,7 +61,7 @@ void serverOnRead(AsyncWebServerRequest *req)
 
 void serverOnWrite(AsyncWebServerRequest *req)
 {
-  Serial.println("Write request.");
+  // Serial.println("Write request.");
   auto *res = req->beginResponseStream("text/plain");
 
   auto n_params = req->params();
@@ -122,11 +125,10 @@ void setup()
 
   pinMode(LED_BUILTIN, OUTPUT);
 
-  for (auto i = 0; i < NUM_SERVOS; i++)
-    servoPulses[i] = SERVO_MIN_PULSE;
-
+  // The below must be in exactly this order:
+  // begin, setOscillatorFrequency, setPWMFreq
   pwm.begin();
-  pwm.setOscillatorFrequency(27000000);
+  pwm.setOscillatorFrequency(PWM_CAL_OSCI);
   pwm.setPWMFreq(SERVO_FREQ);
 
   WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
