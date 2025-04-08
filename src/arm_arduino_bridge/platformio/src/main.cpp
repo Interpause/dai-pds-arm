@@ -6,15 +6,17 @@ int16_t servoPulses[NUM_SERVOS];
 
 void writeServos()
 {
+  Serial.print("[Write]:");
   for (auto i = 0; i < NUM_SERVOS; i++)
   {
     auto us = servoPulses[i];
     if (us == 0)
       continue;
     us = constrain(servoPulses[i], SERVO_MIN_PULSE, SERVO_MAX_PULSE);
-    Serial.printf("Servo %d: %d\n", i + 1, us);
+    Serial.printf(" %d=%d", i + 1, us);
     pwm.writeMicroseconds(i, us);
   }
+  Serial.print("\n");
 }
 
 void connect()
