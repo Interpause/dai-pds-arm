@@ -1,5 +1,6 @@
 """Uses http to communicate with Arduino to send & retrieve sensor_msgs.JointState."""
 
+from dataclasses import dataclass
 from urllib.parse import urljoin
 
 import numpy as np
@@ -8,49 +9,64 @@ import requests
 from rclpy.node import Node
 from sensor_msgs.msg import JointState
 
+
+@dataclass
+class Servo:
+    """Servo calibration settings."""
+
+    min_pulse: int = 500
+    max_pulse: int = 2500
+    min_angle: float = 0.0
+    max_angle: float = 180.0
+
+    def us2ang(self, pulse: int) -> float:
+        """Convert microseconds to angle."""
+        return np.interp(
+            pulse, (self.min_pulse, self.max_pulse), (self.min_angle, self.max_angle)
+        )
+
+    def ang2us(self, ang: float) -> int:
+        """Convert angle to microseconds."""
+        # NOTE: We don't wrap angles here, so ensure the digital robot model is accurate!
+        return int(
+            np.interp(
+                ang, (self.min_angle, self.max_angle), (self.min_pulse, self.max_pulse)
+            )
+        )
+
+
 DEFAULT_URL = "http://192.168.242.140/"
-SERVO_MIN_PULSE = 500
-SERVO_MIN_ANGLE = -90
-SERVO_MAX_PULSE = 2500
-SERVO_MAX_ANGLE = 90
+
 # Actually, servos are open loop and can't feedback position.
 UPDATE_RATE = 50
 
 # TODO: Don't hardcode.
-JOINT2SERVO = dict(
-    base_revolute="1_servo",
-    double_revolute_1="2_servo",
-    double_spin="3_servo",
-    double_revolute_2="4_servo",
-    middle_revolute="5_servo",
-    middle_spin="6_servo",
-    end_revolute_1="7_servo",
-    end_revolute_2="8_servo",
-    effector_spin="9_servo",
-)
+JOINT2SERVO = {
+    "base_revolute": "1_servo",
+    "double_revolute_1": "2_servo",
+    "double_spin": "3_servo",
+    "double_revolute_2": "4_servo",
+    "middle_revolute": "5_servo",
+    "middle_spin": "6_servo",
+    "end_revolute_1": "7_servo",
+    "end_revolute_2": "8_servo",
+    "effector_spin": "9_servo",
+}
 SERVO2JOINT = {v: k for k, v in JOINT2SERVO.items()}
 
-
-def map_angle_to_pulse(ang: float) -> int:
-    """Map angle to pulse width."""
-    # Wrap angles around within 720 applicable range. Can't map 360 -> 180 degrees.
-    if ang < SERVO_MIN_ANGLE:
-        ang += 360
-    if ang > SERVO_MAX_ANGLE:
-        ang -= 360
-
-    return int(
-        np.interp(
-            ang, (SERVO_MIN_ANGLE, SERVO_MAX_ANGLE), (SERVO_MIN_PULSE, SERVO_MAX_PULSE)
-        )
-    )
-
-
-def map_pulse_to_angle(pulse: int) -> float:
-    """Map pulse width to angle."""
-    return np.interp(
-        pulse, (SERVO_MIN_PULSE, SERVO_MAX_PULSE), (SERVO_MIN_ANGLE, SERVO_MAX_ANGLE)
-    )
+# Values were manually calibrated. Angle ranges should be from digital robot model.
+# TODO: Only 1_servo has been calibrated, tape label the rest & calibrate.
+SERVOS = {
+    "1_servo": Servo(450, 2400, 0.0, 180.0),
+    "2_servo": Servo(500, 2500, -180.0, 0.0),
+    "3_servo": Servo(500, 2500, -90.0, 90.0),
+    "4_servo": Servo(500, 2500, 0.0, 180.0),
+    "5_servo": Servo(500, 2500, -180.0, 0.0),
+    "6_servo": Servo(500, 2500, -90.0, 90.0),
+    "7_servo": Servo(500, 2500, -90.0, 90.0),
+    "8_servo": Servo(500, 2500, 0.0, 180.0),
+    "9_servo": Servo(500, 2500),
+}
 
 
 class Bridge(Node):
@@ -85,7 +101,7 @@ class Bridge(Node):
                 continue
             deg = np.rad2deg(msg.position[i])
             params_deg[servo] = deg
-            params[servo] = map_angle_to_pulse(deg)
+            params[servo] = SERVOS[servo].ang2us(deg)
         try:
             self.get_logger().info(
                 f"Cmd Received:\n{params}\n{params_deg}", throttle_duration_sec=3
@@ -115,7 +131,7 @@ class Bridge(Node):
                 self.get_logger().warn(f"Unknown servo: {servo}", once=True)
                 continue
             out.name.append(joint)
-            out.position.append(np.deg2rad(map_pulse_to_angle(pulse)))
+            out.position.append(np.deg2rad(SERVOS[servo].us2ang(pulse)))
 
         debug = {joint: np.rad2deg(ang) for joint, ang in zip(out.name, out.position)}
         self.get_logger().info(f"State sent:\n{debug}", throttle_duration_sec=3)
