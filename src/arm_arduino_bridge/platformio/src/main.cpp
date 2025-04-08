@@ -1,150 +1,97 @@
 #include "main.h"
 
 Adafruit_PWMServoDriver pwm;
-AsyncWebServer server(80);
-int16_t servoPulses[NUM_SERVOS];
+SimpleSerialProtocol *ssp = nullptr;
+
+uint16_t servoPulses[N_SERVO];
+bool sent_err = false;
+bool has_err = false;
+unsigned long last_sent_servo = 0;
+char err_msg[256];
+
+void setupSSP()
+{
+  neopixelWrite(RGB_BUILTIN, 0, 0, RGB_BRIGHTNESS); // Blue: connecting.
+  if (ssp != nullptr)
+    delete ssp;
+  ssp = new SimpleSerialProtocol(Serial, SSP_BAUD, SSP_TIMEOUT, USB::onError, 'a', 'z');
+  USB::setup(ssp);
+}
+
+void handleConnUSB(bool is_connected)
+{
+  if (is_connected)
+  {
+    neopixelWrite(RGB_BUILTIN, 0, RGB_BRIGHTNESS, 0); // Green: operational.
+    // Send err msg if any, once.
+    if (has_err && !sent_err)
+    {
+      USB::sendDebug(err_msg);
+      sent_err = true;
+    }
+  }
+  else
+  {
+    neopixelWrite(RGB_BUILTIN, 0, 0, RGB_BRIGHTNESS); // Blue: reconnecting.
+    sent_err = false;                                 // Allow err to be resent on reconnect.
+  }
+}
 
 void writeServos()
 {
-  Serial.print("[Write]:");
-  for (auto i = 0; i < NUM_SERVOS; i++)
+  char msg[256];
+  appendf(msg, sizeof(msg), "[Write]: ");
+  for (auto i = 0; i < N_SERVO; i++)
   {
     auto us = servoPulses[i];
-    if (us == 0)
-      continue;
-    us = constrain(servoPulses[i], SERVO_MIN_PULSE, SERVO_MAX_PULSE);
-    Serial.printf(" %d=%d", i + 1, us);
+    appendf(msg, sizeof(msg), " %d=%d", i + 1, us);
     pwm.writeMicroseconds(i, us);
   }
-  Serial.print("\n");
 }
 
-void connect()
+void setServos(uint16_t (&pulsewidths)[N_SERVO])
 {
-  Serial.printf("SSID: %s\n", WIFI_SSID);
-  Serial.print("Wifi connecting...");
-  while (WiFi.status() != WL_CONNECTED)
+  for (auto i = 0; i < N_SERVO; i++)
   {
-    neopixelWrite(RGB_BUILTIN, 0, 0, RGB_BRIGHTNESS);
-    delay(500);
-    neopixelWrite(RGB_BUILTIN, 0, 0, 0);
-    Serial.print(".");
-    delay(500);
+    auto us = pulsewidths[i];
+    if (us < SERVO_MIN_PULSE)
+      continue;
+    us = constrain(pulsewidths[i], SERVO_MIN_PULSE, SERVO_MAX_PULSE);
+    servoPulses[i] = us;
   }
-  Serial.print("\n");
-
-  Serial.println("Wifi connected!");
-  Serial.printf("IP address: %s\n", WiFi.localIP().toString().c_str());
-  Serial.printf("Router address: %s\n", WiFi.gatewayIP().toString().c_str());
-  Serial.printf("DNS address: %s\n", WiFi.dnsIP().toString().c_str());
-  Serial.printf("Broadcast address: %s\n", WiFi.broadcastIP().toString().c_str());
-  neopixelWrite(RGB_BUILTIN, 0, RGB_BRIGHTNESS, 0);
-}
-
-void serverOnNotFound(AsyncWebServerRequest *req)
-{
-  if (req->method() == HTTP_OPTIONS)
-    req->send(200);
-  else
-    req->send(404);
-}
-
-void serverOnRead(AsyncWebServerRequest *req)
-{
-  // Serial.println("Read request.");
-  auto *res = req->beginResponseStream("application/json");
-
-  res->printf("[%d", servoPulses[0]);
-  for (auto i = 1; i < NUM_SERVOS; i++)
-    res->printf(",%d", servoPulses[i]);
-  res->print("]");
-  req->send(res);
-}
-
-void serverOnWrite(AsyncWebServerRequest *req)
-{
-  // Serial.println("Write request.");
-  auto *res = req->beginResponseStream("text/plain");
-
-  auto n_params = req->params();
-  int16_t values[NUM_SERVOS];
-  bool invalid = false;
-  memcpy(values, servoPulses, sizeof(values));
-
-  for (auto i = 0; i < n_params; i++)
-  {
-    auto param = req->getParam(i);
-    auto name = param->name();
-    auto value = param->value();
-    auto id = name.toInt();
-    auto pulsewidth = value.toInt();
-    values[id - 1] = pulsewidth;
-
-    if (!name.endsWith("_servo"))
-    {
-      res->printf("Invalid param name: %s (Should be NN_servo)\n", name.c_str());
-      invalid = true;
-    }
-    if (id < 1 || id > NUM_SERVOS)
-    {
-      res->printf("Invalid servo id: %d (Should be 1 to %d)\n", id, NUM_SERVOS);
-      invalid = true;
-    }
-    if (pulsewidth < SERVO_MIN_PULSE || pulsewidth > SERVO_MAX_PULSE)
-    {
-      res->printf("Invalid pulsewidth for %s: %d (Should be between %d and %d)\n", name.c_str(), pulsewidth, SERVO_MIN_PULSE, SERVO_MAX_PULSE);
-      invalid = true;
-    }
-  }
-
-  if (invalid)
-  {
-    res->setCode(400);
-  }
-  else
-  {
-    res->print("OK");
-    memcpy(servoPulses, values, sizeof(values));
-    writeServos();
-  }
-
-  req->send(res);
-}
-
-void setupServer()
-{
-  DefaultHeaders::Instance().addHeader("Access-Control-Allow-Origin", "*");
-  server.on("/write", HTTP_GET, serverOnWrite);
-  server.on("/read", HTTP_GET, serverOnRead);
-  server.onNotFound(serverOnNotFound);
-  server.begin();
+  writeServos();
 }
 
 void setup()
 {
-  Serial.begin(9600);
   delay(1000);
 
   pinMode(LED_BUILTIN, OUTPUT);
 
   // The below must be in exactly this order:
-  // begin, setOscillatorFrequency, setPWMFreq
+  // setPins, begin, setOscillatorFrequency, setPWMFreq
+  Wire.setPins(SDA_PIN, SCL_PIN);
   pwm.begin();
   pwm.setOscillatorFrequency(PWM_CAL_OSCI);
   pwm.setPWMFreq(SERVO_FREQ);
 
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-  connect();
-
-  setupServer();
+  setupSSP();
+  USB::h.callbackConnState = handleConnUSB;
+  USB::h.setServos = setServos;
 }
 
 void loop()
 {
-  if (WiFi.status() != WL_CONNECTED)
+  USB::loop();
+  if (USB::has_fatal)
   {
-    Serial.println("Wifi lost!");
-    connect();
+    neopixelWrite(RGB_BUILTIN, RGB_BRIGHTNESS, 0, 0); // Red: fatal error.
+    setupSSP();
+  }
+  if (USB::is_connected && millis() - last_sent_servo > 1000 / SEND_SERVO_RATE)
+  {
+    last_sent_servo = millis();
+    USB::sendServos(servoPulses);
   }
   delay(10);
 }

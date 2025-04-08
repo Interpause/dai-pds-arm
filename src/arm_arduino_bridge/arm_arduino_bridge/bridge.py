@@ -1,13 +1,24 @@
 """Uses http to communicate with Arduino to send & retrieve sensor_msgs.JointState."""
 
+import subprocess
+import time
 from dataclasses import dataclass
-from urllib.parse import urljoin
+from pathlib import Path
 
 import numpy as np
 import rclpy
-import requests
+import serial
 from rclpy.node import Node
 from sensor_msgs.msg import JointState
+from serial.tools import list_ports
+from serial.tools.list_ports_common import ListPortInfo
+
+from .interface import HEARTBEAT_PERIOD, N_SERVO, USBridge
+
+ESTABLISH_TIMEOUT = 5  # seconds
+DEV_ID = "10c4:ea60"
+BAUD_RATE = 9600
+PLATFORMIO_DIR = Path("/workspaces/dai-pds/src/arm_arduino_bridge/platformio")
 
 
 @dataclass
@@ -34,11 +45,6 @@ class Servo:
             )
         )
 
-
-DEFAULT_URL = "http://192.168.242.140/"
-
-# Actually, servos are open loop and can't feedback position.
-UPDATE_RATE = 50
 
 # TODO: Don't hardcode.
 JOINT2SERVO = {
@@ -69,6 +75,15 @@ SERVOS = {
 }
 
 
+def find_arduino_port(dev_id: str):
+    try:
+        # Assume first Arduino device found is the one we want.
+        dev: ListPortInfo = next(list_ports.grep(dev_id))
+    except StopIteration:
+        return None
+    return dev.device
+
+
 class Bridge(Node):
     """Bridge between ROS2 and Arduino over http."""
 
@@ -76,19 +91,91 @@ class Bridge(Node):
         """Initialize."""
         super(Bridge, self).__init__("arm_arduino_bridge")
 
-        self.declare_parameter("arduino_url", DEFAULT_URL)
-
-        self.sess = requests.Session()
-
         self.state_pub = self.create_publisher(JointState, "robot_joint_states", 3)
 
         self.create_subscription(JointState, "robot_joint_commands", self._cb_cmd, 3)
-        self.create_timer(1 / UPDATE_RATE, self._update_state)
 
-    @property
-    def url(self):
-        """Get URL."""
-        return self.get_parameter("arduino_url").get_parameter_value().string_value
+        self.usb = None
+        self.__has_init_connect = False
+
+        # initial connection cannot be done in __init__ so start after delay
+        self.create_timer(0.1, self._initial_connect)
+        self.create_timer(HEARTBEAT_PERIOD / 1000 / 2, self.heartbeat)
+
+    def _initial_connect(self):
+        if self.__has_init_connect:
+            return
+        self.__has_init_connect = True
+        self.connect()
+
+    def connect(self):
+        while True:
+            try:
+                self.get_logger().info("Running platformio/scripts/build.sh")
+                self.get_logger().info(
+                    "Will take a long while for fresh install due to library installation."
+                )
+                subprocess.run(
+                    [str(PLATFORMIO_DIR / "scripts" / "build.sh"), "--skip-same"],
+                    check=True,
+                )
+
+                self.get_logger().info("Arduino code uploaded/skipped")
+
+            except subprocess.CalledProcessError as e:
+                self.get_logger().error(f"Exit {e.returncode}: {e.output}")
+                self.get_logger().info("Retrying...")
+                continue
+
+            # Arduino port will change as a result of flashing. Redetect.
+            port = None
+            while port is None:
+                port = find_arduino_port(DEV_ID)
+                time.sleep(0.2)
+            self.get_logger().info(f"Arduino port: {port}")
+            self.usb = USBridge(port, BAUD_RATE, self.get_logger())
+
+            # Try until Linux is done configuring device.
+            while True:
+                try:
+                    self.usb.open()
+                    break
+                except serial.SerialException:
+                    time.sleep(0.2)
+
+            start = time.monotonic()
+            while (
+                not self.usb.is_connected
+                and time.monotonic() - start < ESTABLISH_TIMEOUT
+            ):
+                time.sleep(0.2)
+
+            if self.usb.is_connected:
+                break
+            else:
+                self.get_logger().error("Establishment timed out. Retrying...")
+                self.usb.close()
+                self.usb = None
+
+        self.get_logger().info("Connection established, Arduino bridge started.")
+
+    def disconnect(self):
+        if self.usb is None:
+            return
+        self.usb.close()
+
+    def heartbeat(self):
+        if self.usb is None:
+            return
+        self._update_state()
+        try:
+            self.usb.heartbeat()
+            if not self.usb.is_connected:
+                raise serial.SerialTimeoutException()
+        except (serial.SerialTimeoutException, serial.SerialException):
+            self.get_logger().error("Heartbeat timed out. Reconnecting...")
+            self.disconnect()
+            self.connect()
 
     def _cb_cmd(self, msg: JointState):
         """Execute joint state."""
@@ -102,25 +189,25 @@ class Bridge(Node):
             deg = np.rad2deg(msg.position[i])
             params_deg[servo] = deg
             params[servo] = SERVOS[servo].ang2us(deg)
+        self.get_logger().info(
+            f"Cmd Received:\n{params}\n{params_deg}", throttle_duration_sec=3
+        )
+        vals = []
+        for i in range(N_SERVO):
+            servo = f"{i + 1}_servo"
+            vals.append(params.get(servo, 0))
         try:
-            self.get_logger().info(
-                f"Cmd Received:\n{params}\n{params_deg}", throttle_duration_sec=3
-            )
-            self.sess.get(urljoin(self.url, "write"), params=params)
-        except Exception as e:
-            self.get_logger().error(f"Failed to send command: {e}")
-            return
+            self.usb.send_servos(vals)
+        except (serial.SerialTimeoutException, serial.SerialException):
+            self.get_logger().error("Motor write timed out. Reconnecting...")
+            self.disconnect()
+            self.connect()
 
     def _update_state(self):
         """Update joint state."""
-        try:
-            resp = self.sess.get(urljoin(self.url, "read"))
-            resp.raise_for_status()
-            arr = resp.json()
-            assert isinstance(arr, list)
-        except Exception as e:
-            self.get_logger().error(f"Failed to read state: {e}")
+        if self.usb.servo_vals is None:
             return
+        arr = self.usb.servo_vals
 
         out = JointState()
         out.header.stamp = self.get_clock().now().to_msg()
