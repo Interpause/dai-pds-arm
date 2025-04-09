@@ -94,9 +94,9 @@ class Bridge(Node):
         """Initialize."""
         super(Bridge, self).__init__("arm_arduino_bridge")
 
-        self.state_pub = self.create_publisher(JointState, "robot_joint_states", 3)
+        self.state_pub = self.create_publisher(JointState, "robot_joint_states", 1)
 
-        self.create_subscription(JointState, "robot_joint_commands", self._cb_cmd, 3)
+        self.create_subscription(JointState, "robot_joint_commands", self._cb_cmd, 1)
 
         self.usb = None
         self.__has_init_connect = False
@@ -182,6 +182,8 @@ class Bridge(Node):
 
     def _cb_cmd(self, msg: JointState):
         """Execute joint state."""
+        if self.usb is None:
+            return
         params = {}
         params_deg = {}
         for i, joint in enumerate(msg.name):
