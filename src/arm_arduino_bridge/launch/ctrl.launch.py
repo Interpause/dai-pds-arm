@@ -17,7 +17,7 @@ def generate_launch_description():
         str(pkg_arm_moveit_config / "launch" / "demo.launch.py")
     )
 
-    ld.add_action(launch_moveit)
-    ld.add_action(TimerAction(period=3.0, actions=[node_bridge]))
+    ld.add_action(node_bridge)
+    ld.add_action(TimerAction(period=5.0, actions=[launch_moveit]))
 
     return ld

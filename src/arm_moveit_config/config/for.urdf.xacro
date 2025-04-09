@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="for">
-    <xacro:arg name="initial_positions_file" default="initial_positions.yaml" />
+    <!-- <xacro:arg name="initial_positions_file" default="initial_positions.yaml" /> -->
 
     <!-- Import for urdf file -->
     <xacro:include filename="$(find arm_description)/urdf/model.urdf" />
@@ -9,6 +9,7 @@
     <xacro:include filename="for.ros2_control.xacro" />
 
 
-    <xacro:for_ros2_control name="FakeSystem" initial_positions_file="$(arg initial_positions_file)"/>
+    <!-- <xacro:for_ros2_control name="FakeSystem" initial_positions_file="$(arg initial_positions_file)"/> -->
+    <xacro:for_ros2_control name="FakeSystem" />
 
 </robot>

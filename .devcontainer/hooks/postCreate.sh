@@ -11,7 +11,7 @@ echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee /etc/apt/ap
 
 if ! command -v pio &> /dev/null; then
   sudo apt update
-  sudo apt install -y python3-venv
+  sudo apt install -y python3-venv ccache
 
   # https://docs.platformio.org/en/latest/core/installation/methods/installer-script.html
   wget -qO /tmp/get-platformio.py https://raw.githubusercontent.com/platformio/platformio-core-installer/master/get-platformio.py
