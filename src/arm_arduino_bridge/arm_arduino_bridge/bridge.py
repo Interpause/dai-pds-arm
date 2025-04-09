@@ -101,6 +101,7 @@ class Bridge(Node):
         # initial connection cannot be done in __init__ so start after delay
         self.create_timer(0.1, self._initial_connect)
         self.create_timer(HEARTBEAT_PERIOD / 1000 / 2, self.heartbeat)
+        self.create_timer(0.01, self._update_state)
 
     def _initial_connect(self):
         if self.__has_init_connect:
@@ -167,7 +168,6 @@ class Bridge(Node):
     def heartbeat(self):
         if self.usb is None:
             return
-        self._update_state()
         try:
             self.usb.heartbeat()
             if not self.usb.is_connected:
@@ -205,9 +205,10 @@ class Bridge(Node):
 
     def _update_state(self):
         """Update joint state."""
-        if self.usb.servo_vals is None:
+        if self.usb is None or self.usb.servo_vals is None:
             return
         arr = self.usb.servo_vals
+        self.usb.servo_vals = None
 
         out = JointState()
         out.header.stamp = self.get_clock().now().to_msg()
