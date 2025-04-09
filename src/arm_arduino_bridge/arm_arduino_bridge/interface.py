@@ -33,7 +33,7 @@ HEARTBEAT_MISSES = 2
 READ_TIMEOUT = None  # ms
 WRITE_TIMEOUT = 100  # ms
 
-USE_CHECKSUM = False  # DEBUG: Add checksum to verify serial integrity.
+USE_CHECKSUM = True  # DEBUG: Add checksum to verify serial integrity.
 
 
 # NOTE: recv callbacks should only care if SSP is running, while senders must make sure its already connected.
@@ -57,7 +57,7 @@ class USBridge:
 
         # TODO: The ssp library isn't robust to msg corruptions and throws uncaught errors in its own listener thread.
         # Theres no equivalent to the arduino's library don't die on non-registered commands...
-        self.ssp.register_command(EOT_CHAR, self._clear_buffer)
+        # self.ssp.register_command(EOT_CHAR, self._clear_buffer)
 
         self._reset()
 

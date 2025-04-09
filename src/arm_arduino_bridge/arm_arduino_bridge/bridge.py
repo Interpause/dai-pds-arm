@@ -17,7 +17,7 @@ from .interface import HEARTBEAT_PERIOD, N_SERVO, USBridge
 
 ESTABLISH_TIMEOUT = 5  # seconds
 DEV_ID = "10c4:ea60"
-BAUD_RATE = 9600
+BAUD_RATE = 921600
 PLATFORMIO_DIR = Path("/workspaces/dai-pds/src/arm_arduino_bridge/platformio")
 
 

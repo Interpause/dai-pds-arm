@@ -12,9 +12,9 @@
 #define SERVO_MIN_PULSE 100
 #define SERVO_MAX_PULSE 2900
 #define N_SERVO 16
-#define SEND_SERVO_RATE 30 // Hz
+#define SEND_SERVO_RATE 50 // Hz
 
-#define SSP_BAUD 9600
+#define SSP_BAUD 921600
 #define SSP_TIMEOUT 100 // ms
 
 // We can max the brightness later but for now my eyes hurt. (0 to 255)

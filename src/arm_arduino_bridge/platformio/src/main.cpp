@@ -1,21 +1,19 @@
 #include "main.h"
 
 Adafruit_PWMServoDriver pwm;
-SimpleSerialProtocol *ssp = nullptr;
+SimpleSerialProtocol ssp(Serial, SSP_BAUD, SSP_TIMEOUT, USB::onError, 'a', 'z');
 
 uint16_t servoPulses[N_SERVO];
 bool sent_err = false;
 bool has_err = false;
 unsigned long last_sent_servo = 0;
-char err_msg[256];
+char err_msg[512];
 
 void setupSSP()
 {
   neopixelWrite(RGB_BUILTIN, 0, 0, RGB_BRIGHTNESS); // Blue: connecting.
-  if (ssp != nullptr)
-    delete ssp;
-  ssp = new SimpleSerialProtocol(Serial, SSP_BAUD, SSP_TIMEOUT, USB::onError, 'a', 'z');
-  USB::setup(ssp);
+  ssp = SimpleSerialProtocol(Serial, SSP_BAUD, SSP_TIMEOUT, USB::onError, 'a', 'z');
+  USB::setup(&ssp);
 }
 
 void handleConnUSB(bool is_connected)
@@ -39,7 +37,8 @@ void handleConnUSB(bool is_connected)
 
 void writeServos()
 {
-  char msg[256];
+  char msg[512];
+  memset(msg, 0, sizeof(msg));
   appendf(msg, sizeof(msg), "[Write]: ");
   for (auto i = 0; i < N_SERVO; i++)
   {
@@ -88,7 +87,7 @@ void loop()
     neopixelWrite(RGB_BUILTIN, RGB_BRIGHTNESS, 0, 0); // Red: fatal error.
     setupSSP();
   }
-  if (USB::is_connected && millis() - last_sent_servo > 1000 / SEND_SERVO_RATE)
+  if (millis() - last_sent_servo > 1000 / SEND_SERVO_RATE)
   {
     last_sent_servo = millis();
     USB::sendServos(servoPulses);

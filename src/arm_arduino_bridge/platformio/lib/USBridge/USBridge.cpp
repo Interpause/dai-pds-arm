@@ -1,7 +1,7 @@
 #include "USBridge.h"
 
 // DEBUG: Checksum to verify serial integrity.
-#define USE_CHECKSUM 0
+#define USE_CHECKSUM 1
 // DEBUG: Print servo values.
 #define PRINT_SERVO 0
 
@@ -14,8 +14,9 @@ uint32_t _last_handshake = 0;
 #define GUARD_SETUP()       \
     if (USB::sp == nullptr) \
         return;
-#define GUARD_ERROR()      \
-    if (USB::err_num != 0) \
+// TODO: GUARD_ERROR is bad cause it will accumulate invalid bytes in the serial buffer.
+#define GUARD_ERROR()               \
+    if (false && USB::err_num != 0) \
         return;
 
 // Extern variables must be defined exactly once.
@@ -93,7 +94,8 @@ void USB::onError(uint8_t err_num)
 
     // TODO: blinker.
     // Handle errors and send debug message.
-    char msg[256];
+    char msg[512];
+    memset(msg, 0, sizeof(msg));
     appendf(msg, sizeof(msg), "[USB] err %d: ", err_num);
     switch (err_num)
     {
@@ -106,6 +108,12 @@ void USB::onError(uint8_t err_num)
         break;
     case ERROR_WAIT_FOR_BYTE_TIMEOUT:
         appendf(msg, sizeof(msg), "Timeout waiting for byte.");
+        break;
+    case ERROR_COMMAND_IS_NOT_IN_RESERVED_RANGE:
+        appendf(msg, sizeof(msg), "Invalid cmd byte; Likely a msg got interrupted.");
+        break;
+    case ERROR_IS_NOT_EOT:
+        appendf(msg, sizeof(msg), "Not an EOT byte; Is the msg structure correct?");
         break;
     // Errors we haven't bothered to handle yet.
     default:
@@ -177,7 +185,10 @@ void USB::recvServos()
         local_cksum += pulsewidths[i];
     local_cksum = local_cksum % 65536;
     if (local_cksum != cksum)
+    {
+        sp->readEot();
         return;
+    }
 #endif
 
     sp->readEot();
@@ -189,16 +200,20 @@ void USB::recvServos()
     // DEBUG: echo back the servo values.
 #if PRINT_SERVO
     char msg[64];
+    memset(msg, 0, sizeof(msg));
     appendf(msg, sizeof(msg), "[USB] servo:");
     for (auto i = 0; i < N_SERVO; i++)
         appendf(msg, sizeof(msg), " %d=%d", i + 1, pulsewidths[i]);
     sendDebug(msg);
+    delete[] msg;
 #endif
 }
 
 void USB::sendServos(uint16_t (&pulsewidths)[N_SERVO])
 {
     GUARD_SETUP();
+    if (!is_connected)
+        return;
     sp->writeCommand(USB_CMD_SEND_SERVO);
     for (auto i = 0; i < N_SERVO; i++)
         sp->writeUnsignedInt16(pulsewidths[i]);
@@ -214,8 +229,9 @@ void USB::sendServos(uint16_t (&pulsewidths)[N_SERVO])
 
 void USB::sendDebug(const char *msg)
 {
-    return;
     GUARD_SETUP();
+    if (!is_connected)
+        return;
     sp->writeCommand(USB_CMD_SEND_DEBUG);
     sp->writeCString(msg);
     sp->writeEot();
@@ -231,4 +247,8 @@ void appendf(char *msg, size_t size, const char *fmt, ...)
     va_start(args, fmt);
     int ret = vsnprintf(msg + len, size - len, fmt, args);
     va_end(args);
+
+    size_t new_len = strlen(msg);
+    if (new_len < size)
+        memset(msg + new_len, 0, size - new_len);
 }
