@@ -1,0 +1,42 @@
+# This config file is used by ros2_control
+controller_manager:
+  ros__parameters:
+    # IDK why, sending any faster than 30Hz hits the Serial bandwidth limit?
+    # TODO: Since servo values are 0 to 3000, try packing the bits tighter.
+    update_rate: 30  # Hz
+
+    arm_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+
+    hand_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+arm_controller:
+  ros__parameters:
+    joints:
+      - servo_1
+      - servo_2
+      - servo_3
+      - servo_4
+      - servo_5
+      - servo_6
+      - servo_7
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+    allow_nonzero_velocity_at_trajectory_end: true
+hand_controller:
+  ros__parameters:
+    joints:
+      - servo_8
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+    allow_nonzero_velocity_at_trajectory_end: true

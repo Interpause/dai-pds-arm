@@ -10,7 +10,7 @@ def generate_launch_description():
     ld = LaunchDescription()
 
     pkg_arm_arduino_bridge = get_package_share_path("arm_arduino_bridge")
-    pkg_arm_moveit_config = get_package_share_path("arm_moveit_config")
+    pkg_arm_moveit_config = get_package_share_path("arm2_moveit_config")
 
     node_bridge = Node(package="arm_arduino_bridge", executable="bridge")
     launch_moveit = IncludeLaunchDescription(
@@ -18,6 +18,6 @@ def generate_launch_description():
     )
 
     ld.add_action(node_bridge)
-    ld.add_action(TimerAction(period=5.0, actions=[launch_moveit]))
+    ld.add_action(TimerAction(period=6.0, actions=[launch_moveit]))
 
     return ld

@@ -1,0 +1,11 @@
+# Default initial positions for arm2's ros2_control fake system
+
+initial_positions:
+  servo_1: 0
+  servo_2: 0
+  servo_3: 0
+  servo_4: 0
+  servo_5: 0
+  servo_6: 0
+  servo_7: 0
+  servo_8: 0

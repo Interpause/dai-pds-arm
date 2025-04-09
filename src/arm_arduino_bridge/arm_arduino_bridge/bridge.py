@@ -51,15 +51,14 @@ class Servo:
 
 # TODO: Don't hardcode.
 JOINT2SERVO = {
-    "base_revolute": "1_servo",
-    "double_revolute_1": "2_servo",
-    "double_spin": "3_servo",
-    "double_revolute_2": "4_servo",
-    "middle_revolute": "5_servo",
-    "middle_spin": "6_servo",
-    "end_revolute_1": "7_servo",
-    "end_revolute_2": "8_servo",
-    "effector_spin": "9_servo",
+    "servo_1": "1_servo",
+    "servo_2": "2_servo",
+    "servo_3": "3_servo",
+    "servo_4": "4_servo",
+    "servo_5": "5_servo",
+    "servo_6": "6_servo",
+    "servo_7": "7_servo",
+    "servo_8": "8_servo",
 }
 SERVO2JOINT = {v: k for k, v in JOINT2SERVO.items()}
 
@@ -68,13 +67,12 @@ SERVO2JOINT = {v: k for k, v in JOINT2SERVO.items()}
 SERVOS = {
     "1_servo": Servo(450, 2400, 0.0, np.pi),
     "2_servo": Servo(500, 2500, -np.pi, 0.0),
-    "3_servo": Servo(500, 2500, -np.pi / 2, np.pi),
-    "4_servo": Servo(500, 2500, 0.0, np.pi),
+    "3_servo": Servo(500, 2500, -np.pi / 2, np.pi / 2),
+    "4_servo": Servo(500, 2500, -np.pi, 0.0),
     "5_servo": Servo(500, 2500, -np.pi, 0.0),
-    "6_servo": Servo(500, 2500, -np.pi / 2, np.pi / 2),
+    "6_servo": Servo(500, 2500, -np.pi, 0.0),
     "7_servo": Servo(500, 2500, -np.pi / 2, np.pi / 2),
     "8_servo": Servo(500, 2500, 0.0, np.pi),
-    "9_servo": Servo(500, 2500),
 }
 
 
