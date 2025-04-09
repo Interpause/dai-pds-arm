@@ -1,5 +1,5 @@
 {
-  "ros.distro": "humble",
+  "ros.distro": "jazzy",
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
     "source.organizeImports": "explicit"

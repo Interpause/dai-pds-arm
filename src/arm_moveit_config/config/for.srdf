@@ -68,7 +68,6 @@
     <disable_collisions link1="bottom_arm" link2="double_hinge_1" reason="Adjacent"/>
     <disable_collisions link1="bottom_arm" link2="double_hinge_2" reason="Never"/>
     <disable_collisions link1="bottom_arm" link2="middle_arm" reason="Never"/>
-    <disable_collisions link1="bottom_arm" link2="middle_hinge" reason="Never"/>
     <disable_collisions link1="bottom_arm" link2="middle_joint" reason="Never"/>
     <disable_collisions link1="double_hinge_1" link2="double_hinge_2" reason="Adjacent"/>
     <disable_collisions link1="double_hinge_1" link2="end_arm" reason="Never"/>

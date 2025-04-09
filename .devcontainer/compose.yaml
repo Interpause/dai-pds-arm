@@ -32,7 +32,7 @@ services:
     <<: *nvidia-opts
 
     # https://github.com/devcontainers/templates/tree/main/src/ubuntu
-    image: moveit/moveit2:humble-humble-tutorial-source
+    image: moveit/moveit2:jazzy-release
     command: sleep infinity
 
     # Let zombie processes get cleaned up. (scripts/tmux.sh creates a lot of them...)

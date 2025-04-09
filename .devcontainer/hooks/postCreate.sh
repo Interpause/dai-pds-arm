@@ -7,7 +7,7 @@ set -eo pipefail
 sudo rm -f /etc/apt/apt.conf.d/docker-clean
 echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee /etc/apt/apt.conf.d/keep-cache > /dev/null
 
-echo "source /root/ws_moveit/install/setup.sh" >> /root/.bashrc
+# echo "source /root/ws_moveit/install/setup.sh" >> /root/.bashrc
 
 if ! command -v pio &> /dev/null; then
   sudo apt update

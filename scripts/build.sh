@@ -30,7 +30,7 @@ eval set -- "$OPTS"
 function run_clean_shell() {
   # Run commands in login shell to avoid underlay override warning.
   if [ "$VERBOSE" = true ]; then echo "Running: $@" >&2; fi
-  env -iC "$WS_DIR" bash -c "$(echo ". /opt/ros/humble/setup.bash; $@")"
+  env -iC "$WS_DIR" bash -c "$(echo ". /opt/ros/jazzy/setup.bash; $@")"
 }
 
 function build_selective() {
@@ -50,13 +50,13 @@ function build_selective() {
 function scan_folder() {
   # Use colcon to find all valid packages.
   if [ "$VERBOSE" = true ]; then echo "Scanning: $1, Ignoring: ${@:2}" >&2; fi
-  source /opt/ros/humble/setup.bash
+  source /opt/ros/jazzy/setup.bash
   echo $(colcon list --names-only --base-paths $1 --packages-ignore ${@:2})
 }
 
 # Prep for full clean build.
 function prep_full() {
-  source /opt/ros/humble/setup.bash
+  source /opt/ros/jazzy/setup.bash
   rosdep update
   (cd "$WS_DIR" && {
     rosdep install --from-paths src/ thirdparty/ --ignore-src -y
