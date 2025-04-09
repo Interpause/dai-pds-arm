@@ -27,16 +27,19 @@ class Servo:
 
     min_pulse: int = 500
     max_pulse: int = 2500
-    min_angle: float = 0.0
-    max_angle: float = 180.0
 
-    def us2ang(self, pulse: int) -> float:
+    # To avoid some issues with np.deg2rad possibly convert 0 to 2pi, just work
+    # in radians.
+    min_angle: float = 0.0
+    max_angle: float = np.pi
+
+    def us2rad(self, pulse: int) -> float:
         """Convert microseconds to angle."""
         return np.interp(
             pulse, (self.min_pulse, self.max_pulse), (self.min_angle, self.max_angle)
         )
 
-    def ang2us(self, ang: float) -> int:
+    def rad2us(self, ang: float) -> int:
         """Convert angle to microseconds."""
         # NOTE: We don't wrap angles here, so ensure the digital robot model is accurate!
         return int(
@@ -63,14 +66,14 @@ SERVO2JOINT = {v: k for k, v in JOINT2SERVO.items()}
 # Values were manually calibrated. Angle ranges should be from digital robot model.
 # TODO: Only 1_servo has been calibrated, tape label the rest & calibrate.
 SERVOS = {
-    "1_servo": Servo(450, 2400, 0.0, 180.0),
-    "2_servo": Servo(500, 2500, -180.0, 0.0),
-    "3_servo": Servo(500, 2500, -90.0, 90.0),
-    "4_servo": Servo(500, 2500, 0.0, 180.0),
-    "5_servo": Servo(500, 2500, -180.0, 0.0),
-    "6_servo": Servo(500, 2500, -90.0, 90.0),
-    "7_servo": Servo(500, 2500, -90.0, 90.0),
-    "8_servo": Servo(500, 2500, 0.0, 180.0),
+    "1_servo": Servo(450, 2400, 0.0, np.pi),
+    "2_servo": Servo(500, 2500, -np.pi, 0.0),
+    "3_servo": Servo(500, 2500, -np.pi / 2, np.pi),
+    "4_servo": Servo(500, 2500, 0.0, np.pi),
+    "5_servo": Servo(500, 2500, -np.pi, 0.0),
+    "6_servo": Servo(500, 2500, -np.pi / 2, np.pi / 2),
+    "7_servo": Servo(500, 2500, -np.pi / 2, np.pi / 2),
+    "8_servo": Servo(500, 2500, 0.0, np.pi),
     "9_servo": Servo(500, 2500),
 }
 
@@ -186,9 +189,9 @@ class Bridge(Node):
             if servo is None:
                 self.get_logger().warn(f"Unknown joint: {joint}", once=True)
                 continue
-            deg = np.rad2deg(msg.position[i])
-            params_deg[servo] = deg
-            params[servo] = SERVOS[servo].ang2us(deg)
+            rad = msg.position[i]
+            params_deg[servo] = np.rad2deg(rad)
+            params[servo] = SERVOS[servo].rad2us(rad)
         self.get_logger().info(
             f"Cmd Received:\n{params}\n{params_deg}", throttle_duration_sec=3
         )
@@ -219,7 +222,7 @@ class Bridge(Node):
                 self.get_logger().warn(f"Unknown servo: {servo}", once=True)
                 continue
             out.name.append(joint)
-            out.position.append(np.deg2rad(SERVOS[servo].us2ang(pulse)))
+            out.position.append(SERVOS[servo].us2rad(pulse))
 
         debug = {joint: np.rad2deg(ang) for joint, ang in zip(out.name, out.position)}
         self.get_logger().info(f"State sent:\n{debug}", throttle_duration_sec=3)
