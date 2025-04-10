@@ -25,6 +25,7 @@ setup(
     entry_points={
         "console_scripts": [
             "bridge = arm_arduino_bridge.bridge:main",
+            "direct = arm_arduino_bridge.direct:main",
         ],
     },
 )

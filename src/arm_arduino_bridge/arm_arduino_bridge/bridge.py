@@ -12,6 +12,7 @@ from rclpy.node import Node
 from sensor_msgs.msg import JointState
 from serial.tools import list_ports
 from serial.tools.list_ports_common import ListPortInfo
+from std_msgs.msg import UInt16MultiArray
 
 from .interface import HEARTBEAT_PERIOD, N_SERVO, USBridge
 
@@ -94,7 +95,10 @@ class Bridge(Node):
 
         self.state_pub = self.create_publisher(JointState, "robot_joint_states", 1)
 
-        self.create_subscription(JointState, "robot_joint_commands", self._cb_cmd, 1)
+        self.create_subscription(
+            JointState, "robot_joint_commands", self._cb_joint_cmd, 1
+        )
+        self.create_subscription(UInt16MultiArray, "cmd", self._cb_direct_ctrl, 1)
 
         self.usb = None
         self.__has_init_connect = False
@@ -178,7 +182,7 @@ class Bridge(Node):
             self.disconnect()
             self.connect()
 
-    def _cb_cmd(self, msg: JointState):
+    def _cb_joint_cmd(self, msg: JointState):
         """Execute joint state."""
         if self.usb is None:
             return
@@ -201,6 +205,22 @@ class Bridge(Node):
             vals.append(params.get(servo, 0))
         try:
             self.usb.send_servos(vals)
+        except (serial.SerialTimeoutException, serial.SerialException):
+            self.get_logger().error("Motor write timed out. Reconnecting...")
+            self.disconnect()
+            self.connect()
+
+    def _cb_direct_ctrl(self, msg: UInt16MultiArray):
+        """Directly control servos."""
+        if self.usb is None:
+            return
+        if len(msg.data) != N_SERVO:
+            self.get_logger().error(
+                f"Expected {N_SERVO} servo values, got {len(msg.data)}."
+            )
+            return
+        try:
+            self.usb.send_servos(msg.data)
         except (serial.SerialTimeoutException, serial.SerialException):
             self.get_logger().error("Motor write timed out. Reconnecting...")
             self.disconnect()
