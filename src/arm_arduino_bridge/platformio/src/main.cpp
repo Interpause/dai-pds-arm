@@ -74,6 +74,14 @@ void setup()
   pwm.setOscillatorFrequency(PWM_CAL_OSCI);
   pwm.setPWMFreq(SERVO_FREQ);
 
+  // Ensure servos's are in well known position on first startup.
+  delay(10);
+  for (auto i = 0; i < N_SERVO; i++)
+  {
+    servoPulses[i] = 1500;
+    writeServos();
+  }
+
   setupSSP();
   USB::h.callbackConnState = handleConnUSB;
   USB::h.setServos = setServos;

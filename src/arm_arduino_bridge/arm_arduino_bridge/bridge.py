@@ -66,13 +66,13 @@ SERVO2JOINT = {v: k for k, v in JOINT2SERVO.items()}
 # TODO: Only 1_servo has been calibrated, tape label the rest & calibrate.
 SERVOS = {
     "1_servo": Servo(450, 2400, 0.0, np.pi),
-    "2_servo": Servo(500, 2500, -np.pi, 0.0),
-    "3_servo": Servo(500, 2500, -np.pi / 2, np.pi / 2),
-    "4_servo": Servo(500, 2500, -np.pi, 0.0),
-    "5_servo": Servo(500, 2500, -np.pi, 0.0),
-    "6_servo": Servo(500, 2500, -np.pi, 0.0),
-    "7_servo": Servo(500, 2500, -np.pi / 2, np.pi / 2),
-    "8_servo": Servo(500, 2500, 0.0, np.pi),
+    "2_servo": Servo(450, 2400, -np.pi, 0.0),
+    "3_servo": Servo(450, 2400, -np.pi / 2, np.pi / 2),
+    "4_servo": Servo(450, 2400, -np.pi, 0.0),
+    "5_servo": Servo(450, 2400, -np.pi, 0.0),
+    "6_servo": Servo(450, 2400, -np.pi, 0.0),
+    "7_servo": Servo(450, 2400, -np.pi / 2, np.pi / 2),
+    "8_servo": Servo(450, 2400, 0.0, np.pi),
 }
 
 
