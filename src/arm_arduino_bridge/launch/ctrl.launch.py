@@ -18,6 +18,6 @@ def generate_launch_description():
     )
 
     ld.add_action(node_bridge)
-    ld.add_action(TimerAction(period=6.0, actions=[launch_moveit]))
+    ld.add_action(TimerAction(period=8.0, actions=[launch_moveit]))
 
     return ld

@@ -26,28 +26,42 @@ PLATFORMIO_DIR = Path("/workspaces/dai-pds/src/arm_arduino_bridge/platformio")
 class Servo:
     """Servo calibration settings."""
 
-    min_pulse: int = 500
-    max_pulse: int = 2500
+    mid_pulse: int = 1500
+    pulse_range: int = 1000
 
     # To avoid some issues with np.deg2rad possibly convert 0 to 2pi, just work
     # in radians.
     min_angle: float = 0.0
     max_angle: float = np.pi
 
+    flip: bool = False
+
     def us2rad(self, pulse: int) -> float:
         """Convert microseconds to angle."""
+        min_pulse = self.mid_pulse - self.pulse_range
+        max_pulse = self.mid_pulse + self.pulse_range
+        if self.flip:
+            min_pulse, max_pulse = -max_pulse, -min_pulse
+            pulse = -pulse
         return np.interp(
-            pulse, (self.min_pulse, self.max_pulse), (self.min_angle, self.max_angle)
+            pulse, (min_pulse, max_pulse), (self.min_angle, self.max_angle)
         )
 
     def rad2us(self, ang: float) -> int:
         """Convert angle to microseconds."""
+        min_pulse = self.mid_pulse - self.pulse_range
+        max_pulse = self.mid_pulse + self.pulse_range
+        if self.flip:
+            min_pulse, max_pulse = -max_pulse, -min_pulse
         # NOTE: We don't wrap angles here, so ensure the digital robot model is accurate!
-        return int(
+        pulse = int(
             np.interp(
-                ang, (self.min_angle, self.max_angle), (self.min_pulse, self.max_pulse)
+                ang,
+                (self.min_angle, self.max_angle),
+                (min_pulse, max_pulse),
             )
         )
+        return -pulse if self.flip else pulse
 
 
 # TODO: Don't hardcode.
@@ -66,14 +80,14 @@ SERVO2JOINT = {v: k for k, v in JOINT2SERVO.items()}
 # Values were manually calibrated. Angle ranges should be from digital robot model.
 # TODO: Only 1_servo has been calibrated, tape label the rest & calibrate.
 SERVOS = {
-    "1_servo": Servo(450, 2400, 0.0, np.pi),
-    "2_servo": Servo(450, 2400, -np.pi, 0.0),
-    "3_servo": Servo(450, 2400, -np.pi / 2, np.pi / 2),
-    "4_servo": Servo(450, 2400, -np.pi, 0.0),
-    "5_servo": Servo(450, 2400, -np.pi, 0.0),
-    "6_servo": Servo(450, 2400, -np.pi, 0.0),
-    "7_servo": Servo(450, 2400, -np.pi / 2, np.pi / 2),
-    "8_servo": Servo(450, 2400, 0.0, np.pi),
+    "1_servo": Servo(1500, 1000, 0.0, np.pi, True),
+    "2_servo": Servo(1500, 1000, -np.pi, 0.0),
+    "3_servo": Servo(1500, 1000, -np.pi / 2, np.pi / 2),
+    "4_servo": Servo(1500, 1000, -np.pi, 0.0),
+    "5_servo": Servo(1500, 1000, -np.pi, 0.0),
+    "6_servo": Servo(1500, 1000, -np.pi, 0.0),
+    "7_servo": Servo(1500, 1000, -np.pi / 2, np.pi / 2),
+    "8_servo": Servo(1500, 1000, 0.0, np.pi),
 }
 
 
