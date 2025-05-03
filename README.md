@@ -1,4 +1,8 @@
-# Useful Commands
+# Arm Control Stuff
+
+There are three sets of arms: arm, arm2 and arm3. arm2 is the arm we are using.
+arm is the old nested link design, arm3 is the last-ditch effort as light as possible
+arm that we didn't use cause it still was not light enough.
 
 ## Adding New Arms
 
