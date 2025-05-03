@@ -18,7 +18,7 @@
 #define SSP_TIMEOUT 100 // ms
 
 // We can max the brightness later but for now my eyes hurt. (0 to 255)
-#define RGB_BRIGHTNESS 1
+#define RGB_BRIGHTNESS 255
 
 #define SDA_PIN 4
 #define SCL_PIN 5

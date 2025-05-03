@@ -9,8 +9,8 @@ controller_manager:
       type: joint_trajectory_controller/JointTrajectoryController
 
 
-    hand_controller:
-      type: joint_trajectory_controller/JointTrajectoryController
+    # hand_controller:
+    #   type: joint_trajectory_controller/JointTrajectoryController
 
 
     joint_state_broadcaster:
@@ -26,17 +26,18 @@ arm_controller:
       - servo_5
       - servo_6
       - servo_7
-    command_interfaces:
-      - position
-    state_interfaces:
-      - position
-    allow_nonzero_velocity_at_trajectory_end: true
-hand_controller:
-  ros__parameters:
-    joints:
       - servo_8
     command_interfaces:
       - position
     state_interfaces:
       - position
     allow_nonzero_velocity_at_trajectory_end: true
+# hand_controller:
+#   ros__parameters:
+#     joints:
+#       - servo_8
+#     command_interfaces:
+#       - position
+#     state_interfaces:
+#       - position
+#     allow_nonzero_velocity_at_trajectory_end: true

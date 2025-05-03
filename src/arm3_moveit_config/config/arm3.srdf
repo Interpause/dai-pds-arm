@@ -31,8 +31,8 @@
         <joint name="servo_6" value="0"/>
     </group_state>
     <group_state name="fully_extended" group="arm">
-        <joint name="servo_1" value="-1.5708"/>
-        <joint name="servo_2" value="1.5708"/>
+        <joint name="servo_1" value="-1.5707"/>
+        <joint name="servo_2" value="1.5707"/>
         <joint name="servo_3" value="0"/>
         <joint name="servo_4" value="-1.5707"/>
         <joint name="servo_5" value="1.5707"/>
@@ -41,10 +41,18 @@
     <group_state name="example1" group="arm">
         <joint name="servo_1" value="-1.9052"/>
         <joint name="servo_2" value="1.1755"/>
-        <joint name="servo_3" value="-1.5707"/>
+        <joint name="servo_3" value="-1.5706"/>
         <joint name="servo_4" value="-0.527"/>
         <joint name="servo_5" value="1.135"/>
         <joint name="servo_6" value="-2.3308"/>
+    </group_state>
+    <group_state name="example2" group="arm">
+        <joint name="servo_1" value="-1.5707" />
+        <joint name="servo_2" value="0" />
+        <joint name="servo_3" value="0" />
+        <joint name="servo_4" value="0" />
+        <joint name="servo_5" value="0" />
+        <joint name="servo_6" value="0" />
     </group_state>
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="hand" parent_link="arm_5" group="hand"/>

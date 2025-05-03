@@ -83,12 +83,20 @@ SERVOS = {
     "1_servo": Servo(1500, 1000, 0.0, np.pi, True),
     "2_servo": Servo(1500, 1000, -np.pi, 0.0),
     "3_servo": Servo(1500, 1000, -np.pi / 2, np.pi / 2),
-    "4_servo": Servo(1500, 1000, -np.pi, 0.0),
+    "4_servo": Servo(1500, 1000, -np.pi, 0.0, True),
     "5_servo": Servo(1500, 1000, -np.pi, 0.0),
-    "6_servo": Servo(1500, 1000, -np.pi, 0.0),
+    "6_servo": Servo(1500, 1000, -np.pi, 0.0, True),
     "7_servo": Servo(1500, 1000, -np.pi / 2, np.pi / 2),
-    "8_servo": Servo(1500, 1000, 0.0, np.pi),
+    "8_servo": Servo(1500, 1000, 0.0, np.pi, True),
 }
+# SERVOS = {
+#     "1_servo": Servo(1500, 1000, -np.pi, 0.0),
+#     "2_servo": Servo(1500, 1000, 0.0, np.pi),
+#     "3_servo": Servo(1500, 1000, -np.pi / 2, np.pi / 2),
+#     "4_servo": Servo(1500, 1000, -np.pi, 0.0),
+#     "5_servo": Servo(1500, 1000, 0.0, np.pi),
+#     "6_servo": Servo(1500, 1000, -np.pi, 0.0),
+# }
 
 
 def find_arduino_port(dev_id: str):

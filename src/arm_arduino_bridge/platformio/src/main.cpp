@@ -3,7 +3,8 @@
 Adafruit_PWMServoDriver pwm;
 SimpleSerialProtocol ssp(Serial, SSP_BAUD, SSP_TIMEOUT, USB::onError, 'a', 'z');
 
-uint16_t servoPulses[N_SERVO] = {500, 2500, 1500, 2500, 2500, 2500, 1500, 500, 0, 0, 0, 0, 0, 0, 0, 0};
+uint16_t servoPulses[N_SERVO] = {2500, 2500, 1500, 500, 2500, 500, 1500, 2500, 0, 0, 0, 0, 0, 0, 0, 0};
+// uint16_t servoPulses[N_SERVO] = {1500, 1500, 1500, 1500, 1500, 2500, 1500, 1500, 0, 0, 0, 0, 0, 0, 0, 0};
 bool sent_err = false;
 bool has_err = false;
 unsigned long last_sent_servo = 0;
@@ -76,6 +77,7 @@ void setup()
 
   // Ensure servos's are in well known position on first startup.
   delay(10);
+  writeServos();
   // for (auto i = 0; i < N_SERVO; i++)
   // {
   //   servoPulses[i] = 1500;
